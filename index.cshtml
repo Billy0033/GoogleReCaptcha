@@ -1,0 +1,67 @@
+@*Получаем ключ с файла appsettings.json*@
+
+@inject IConfiguration configuration
+@{
+    var siteKey = configuration["GoogleReCaptcha:SiteKey"];
+}
+
+@*Можно объявить тут (в текущем файле) или в главном файле index.html (в обычной верстке) или _Layout.cshtml (на Razor)*@
+@* <script src="https://www.google.com/recaptcha/api.js"></script> *@
+
+
+@*Сама форма для заполнения*@
+<div class="row">
+    <div class="col-lg-10 col-xl-8 offset-lg-1 offset-xl-2">
+        <form asp-controller="Home" asp-action="Index" method="post" enctype="multipart/form-data">
+            <div class="row">
+                <div class="col-sm-6 col-md-4 mb-3">
+                    <label for="orderUserName" class="form-label">Введите имя <span class="fw-bold text-danger">*</span></label>
+                    <input type="text" class="form-control" name="Name" id="orderUserName" required>
+                </div>
+                <div class="col-sm-6 col-md-4 mb-3">
+                    <label for="orderUserPhone" class="form-label">Номер телефона <span class="fw-bold text-danger">*</span></label>
+                    <input type="tel" class="form-control" name="Phone" id="orderUserPhone" pattern="\+?[0-9\s\-\(\)]*" required>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="orderUserEmail" class="form-label">Электронная почта <span class="fw-bold text-danger">*</span></label>
+                    <input type="email" class="form-control" name="Email" id="orderUserEmail" pattern="^[\w\.-]+@@[\w\.-]+\.\w+$" required>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="orderUserTextarea" class="form-label">Комментарий <span class="fw-bold text-danger">*</span></label>
+                <textarea class="form-control" name="Comment" id="orderUserTextarea" rows="3" required></textarea>
+            </div>
+            <div class="mb-3 d-flex justify-content-between align-items-center">
+                <label class="file-upload d-inline-flex align-items-center gap-3">
+                <input class="d-none" type="file" name="File" id="orderUserFile">
+                    <span class="file-upload-icon">
+                        <i class="fa-solid fa-paperclip"></i>
+                    </span>
+                    <span class="file-upload-text">Прикрепить файл</span>
+                </label>
+                @*Для GoogleReCaptcha v2*@
+                <div class="g-recaptcha" data-sitekey="@siteKey"></div>
+            </div>
+            <div class="d-flex flex-column flex-md-row gap-3 align-items-start align-items-md-center justify-content-md-between">
+                <p class="small text-secondary mb-0">Отправляя заявку, вы соглашаетесь на <a class="link-secondary" asp-controller="Page" asp-action="Index" asp-route-slug="privacy" target="_blank">обработку персональных данных</a></p>
+                <button type="submit" class="btn btn-primary">Отправить</button>
+
+                @*Для GoogleReCaptcha v3 мы меняем нашу кнопку на кнопку ту, что ниже и подключаем к ней скрипт, который находиться ниже (он закоментирован)*@
+                @* <button type="submit"
+                        class="g-recaptcha btn btn-primary"
+                        data-sitekey="@siteKey"
+                        data-callback='onSubmit'
+                        data-action='submit'>
+                    Отправить
+                </button> *@
+            </div>
+        </form>
+    </div>
+</div>
+
+@*Для GoogleReCaptcha v3*@
+@* <script>
+    function onSubmit(token) {
+      document.getElementById("contact_form_id").submit();
+    }
+</script> *@
